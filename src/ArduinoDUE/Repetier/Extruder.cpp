@@ -2142,6 +2142,11 @@ void TemperatureController::updateCurrentTemperature()
         int16_t oldtemp = pgm_read_word(&temptable[1]);
         int16_t newraw,newtemp = 0;
         currentTemperature = (1023 << (2 - ANALOG_REDUCE_BITS)) - currentTemperature;
+        if (type == 0) {
+            char str[10];
+            sprintf(str, "%d", currentTemperature);
+            Com::printFLN(str);
+        }
         while(i < num)
         {
             newraw = pgm_read_word(&temptable[i++]);
@@ -2151,6 +2156,9 @@ void TemperatureController::updateCurrentTemperature()
                 //OUT_P_I("RC O:",oldtemp);OUT_P_I_LN(" OR:",oldraw);
                 //OUT_P_I("RC N:",newtemp);OUT_P_I_LN(" NR:",newraw);
                 currentTemperatureC = TEMP_INT_TO_FLOAT(oldtemp + (float)(currentTemperature-oldraw)*(float)(newtemp - oldtemp) / (newraw - oldraw));
+                // Com::printFLN("Here1");
+                // currentTemperatureC = 30.0f + currentTemperature * 1.0f / 4096.0f * 50.0f;
+                // currentTemperatureC = 60.0f + (1600 - currentTemperature) / 1600.0f * 40.0f;
                 return;
             }
             oldtemp = newtemp;
